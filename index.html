@@ -15,12 +15,12 @@ body { font-family: 'Segoe UI', sans-serif; background: #f5f7fa; color: #1a1a2e;
 .pill b { color: #f0a500; }
 .section-label { font-size: 0.72rem; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; color: #999; margin: 22px 0 10px; padding-bottom: 6px; border-bottom: 1px solid #e0e0e0; }
 .card { background: white; border-radius: 12px; padding: 18px 20px; margin-bottom: 14px; border: 1.5px solid #e8e8e8; }
-.qrow { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 12px; }
+.qrow { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 8px; }
 .qnum { background: #1a1a2e; color: white; border-radius: 7px; min-width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; font-size: 0.78rem; font-weight: 700; flex-shrink: 0; }
 .qtext { font-size: 0.9rem; line-height: 1.5; flex: 1; padding-top: 4px; }
-.badges { display: flex; flex-direction: column; gap: 4px; align-items: flex-end; flex-shrink: 0; }
-.slide-tag { background: #fff3cd; color: #856404; border: 1px solid #ffc107; border-radius: 5px; font-size: 0.68rem; font-weight: 700; padding: 2px 6px; white-space: nowrap; }
-.type-tag { font-size: 0.65rem; font-weight: 700; padding: 2px 6px; border-radius: 5px; text-transform: uppercase; white-space: nowrap; }
+.tag-row { display: flex; gap: 6px; align-items: center; margin-left: 40px; margin-bottom: 12px; }
+.slide-tag { background: #fff3cd; color: #856404; border: 1px solid #ffc107; border-radius: 5px; font-size: 0.72rem; font-weight: 700; padding: 3px 8px; white-space: nowrap; }
+.type-tag { font-size: 0.68rem; font-weight: 700; padding: 3px 8px; border-radius: 5px; text-transform: uppercase; white-space: nowrap; }
 .mc-tag { background: #e8f4fd; color: #1565c0; }
 .tf-tag { background: #fce8e8; color: #c62828; }
 .id-tag { background: #e8f5e9; color: #2e7d32; }
@@ -42,7 +42,7 @@ body { font-family: 'Segoe UI', sans-serif; background: #f5f7fa; color: #1a1a2e;
 .id-inp:focus { border-color: #f0a500; }
 .id-inp.correct { border-color: #2e7d32; background: #e8f5e9; }
 .id-inp.wrong { border-color: #c62828; background: #fce8e8; }
-.fb { font-size: 0.78rem; margin-top: 7px; padding: 6px 10px; border-radius: 6px; display: none; }
+.fb { font-size: 0.78rem; margin-top: 7px; padding: 6px 10px; border-radius: 6px; display: none; margin-left: 40px; }
 .fb.show { display: block; }
 .fb.ok { background: #e8f5e9; color: #2e7d32; }
 .fb.no { background: #fce8e8; color: #c62828; }
@@ -101,7 +101,7 @@ var Q = [
   {t:'mc',s:'Slide 2',q:'What SAP software version is used in this curriculum?',o:['SAP S/4HANA 2019','SAP S/4HANA 2020','SAP R/3 2021','SAP ECC 6.0'],a:1},
   {t:'mc',s:'Slide 18',q:'Which business process label corresponds to "Procurement" in Global Bike?',o:['Sell','Make','Buy','Track'],a:2},
   {t:'mc',s:'Slide 21',q:'The Procure-to-Pay process in Global Bike involves which two SAP modules?',o:['SD and FI','MM and FI','SD and MM','PP and CO'],a:1},
-  {t:'mc',s:'Slide 12',q:'What is the product code for Touring Frame – Silver?',o:['TRFR1000','TRFR2000','TRFR3000','TRWH1000'],a:1},
+  {t:'mc',s:'Slide 12',q:'What is the product code for Touring Frame - Silver?',o:['TRFR1000','TRFR2000','TRFR3000','TRWH1000'],a:1},
   {t:'mc',s:'Slide 9',q:'What are the two locations of Global Bike Germany GmbH?',o:['Berlin and Munich','Frankfurt and Cologne','Heidelberg and Hamburg','Bonn and Stuttgart'],a:2},
   {t:'mc',s:'Slide 12',q:'Which of the following is a Trading Good (Accessory)?',o:['Carbon Composite Wheel','Touring Aluminum Wheel Assembly','Off Road Helmet','Pedal Assembly'],a:2},
   {t:'mc',s:'Slide 10',q:'Who serves as the President of Europe at Global Bike?',o:['Paul Hansen','Hans-Werner Schnoor','Antonio Rodriguez','Wilhelm Ollenhauer'],a:1},
@@ -137,7 +137,10 @@ function build() {
   var f = document.getElementById('form');
   f.innerHTML = '';
   var lastT = null;
-  var labels = {mc:'Part I — Multiple Choice', tf:'Part II — True or False', id:'Part III — Identification'};
+  var labels  = {mc:'Part I — Multiple Choice', tf:'Part II — True or False', id:'Part III — Identification'};
+  var typeTxt = {mc:'Multiple Choice', tf:'True / False', id:'Identification'};
+  var typeTag = {mc:'mc-tag', tf:'tf-tag', id:'id-tag'};
+
   Q.forEach(function(q, i) {
     if (q.t !== lastT) {
       var d = document.createElement('div');
@@ -146,10 +149,10 @@ function build() {
       f.appendChild(d);
       lastT = q.t;
     }
+
     var card = document.createElement('div');
     card.className = 'card';
-    var typeTag = {mc:'mc-tag',tf:'tf-tag',id:'id-tag'}[q.t];
-    var typeText = {mc:'Multiple Choice',tf:'True / False',id:'Identification'}[q.t];
+
     var body = '';
     if (q.t === 'mc') {
       body = '<div class="options" id="opts'+i+'">' +
@@ -157,18 +160,26 @@ function build() {
           return '<div class="opt" id="opt'+i+'_'+j+'" onclick="pickMC('+i+','+j+')"><span class="lbl">'+['A','B','C','D'][j]+'</span>'+op+'</div>';
         }).join('') + '</div>';
     } else if (q.t === 'tf') {
-      body = '<div class="tf-row"><button class="tfbtn" id="tf'+i+'T" onclick="pickTF('+i+',\'True\')">True</button><button class="tfbtn" id="tf'+i+'F" onclick="pickTF('+i+',\'False\')">False</button></div>';
+      body = '<div class="tf-row">'
+           + '<button class="tfbtn" id="tf'+i+'T" onclick="pickTF('+i+',\'True\')">True</button>'
+           + '<button class="tfbtn" id="tf'+i+'F" onclick="pickTF('+i+',\'False\')">False</button>'
+           + '</div>';
     } else {
       body = '<div class="id-wrap"><input class="id-inp" id="id'+i+'" type="text" placeholder="Type your answer..." oninput="saveID('+i+')"/></div>';
     }
+
     card.innerHTML =
-      '<div class="qrow">' +
-        '<div class="qnum">'+(i+1)+'</div>' +
-        '<div class="qtext">'+q.q+'</div>' +
-        '<div class="badges"><span class="slide-tag">📄 '+q.s+'</span><span class="type-tag '+typeTag+'">'+typeText+'</span></div>' +
-      '</div>' +
-      body +
-      '<div class="fb" id="fb'+i+'"></div>';
+      '<div class="qrow">'
+        + '<div class="qnum">'+(i+1)+'</div>'
+        + '<div class="qtext">'+q.q+'</div>'
+      + '</div>'
+      + '<div class="tag-row">'
+        + '<span class="slide-tag">📄 '+q.s+'</span>'
+        + '<span class="type-tag '+typeTag[q.t]+'">'+typeTxt[q.t]+'</span>'
+      + '</div>'
+      + body
+      + '<div class="fb" id="fb'+i+'"></div>';
+
     f.appendChild(card);
   });
 }
@@ -176,16 +187,16 @@ function build() {
 function pickMC(qi, oi) {
   if (done) return;
   answers[qi] = oi;
-  var opts = document.querySelectorAll('#opts'+qi+' .opt');
-  opts.forEach(function(el, j) { el.className = 'opt' + (j===oi?' selected':''); });
+  document.querySelectorAll('#opts'+qi+' .opt').forEach(function(el, j) {
+    el.className = 'opt' + (j===oi ? ' selected' : '');
+  });
 }
 
 function pickTF(qi, val) {
   if (done) return;
   answers[qi] = val;
   ['True','False'].forEach(function(v) {
-    var btn = document.getElementById('tf'+qi+v[0]);
-    btn.className = 'tfbtn' + (v===val?' selected':'');
+    document.getElementById('tf'+qi+v[0]).className = 'tfbtn' + (v===val ? ' selected' : '');
   });
 }
 
@@ -202,7 +213,7 @@ function submitExam() {
     if (q.t === 'mc') {
       var ua = answers[i];
       document.querySelectorAll('#opts'+i+' .opt').forEach(function(el, j) {
-        el.className = 'opt' + (j===q.a?' correct':(j===ua?' wrong':''));
+        el.className = 'opt' + (j===q.a ? ' correct' : (j===ua ? ' wrong' : ''));
       });
       correct = ua === q.a;
       fb.textContent = correct ? '✅ Correct!' : '❌ Correct answer: '+['A','B','C','D'][q.a]+'. '+q.o[q.a];
@@ -210,19 +221,18 @@ function submitExam() {
       var ua = answers[i];
       ['True','False'].forEach(function(v) {
         var btn = document.getElementById('tf'+i+v[0]);
-        btn.className = 'tfbtn' + (v===q.a?' correct':(v===ua&&ua!==q.a?' wrong':''));
+        btn.className = 'tfbtn' + (v===q.a ? ' correct' : (v===ua && ua!==q.a ? ' wrong' : ''));
       });
       correct = ua === q.a;
       fb.textContent = correct ? '✅ Correct!' : '❌ Correct answer: '+q.a;
     } else {
-      var raw = ((answers[i]||'').trim().toLowerCase());
+      var raw = (answers[i]||'').trim().toLowerCase();
       var all = [q.a.toLowerCase()].concat(q.alt||[]);
-      correct = all.some(function(x){return raw===x;});
-      var inp = document.getElementById('id'+i);
-      inp.className = 'id-inp ' + (correct?'correct':'wrong');
+      correct = all.some(function(x){ return raw===x; });
+      document.getElementById('id'+i).className = 'id-inp ' + (correct ? 'correct' : 'wrong');
       fb.textContent = correct ? '✅ Correct!' : '❌ Correct answer: '+q.a;
     }
-    fb.className = 'fb show ' + (correct?'ok':'no');
+    fb.className = 'fb show ' + (correct ? 'ok' : 'no');
     if (correct) score++;
   });
   var pct = Math.round(score/40*100);
