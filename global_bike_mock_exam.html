@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', sans-serif;
+    background: #f5f7fa;
+    color: #1a1a2e;
+    padding: 20px;
+    min-height: 100vh;
+  }
+  .exam-header {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    color: white;
+    padding: 24px 28px;
+    border-radius: 12px;
+    margin-bottom: 24px;
+    border-left: 6px solid #f0a500;
+  }
+  .exam-header h1 { font-size: 1.4rem; font-weight: 700; margin-bottom: 4px; }
+  .exam-header p { font-size: 0.85rem; opacity: 0.75; }
+  .stats-bar {
+    display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap;
+  }
+  .stat-pill {
+    background: white; border-radius: 20px; padding: 6px 14px;
+    font-size: 0.78rem; font-weight: 600; border: 1.5px solid #e0e0e0;
+    color: #555;
+  }
+  .stat-pill span { color: #f0a500; }
+  .question-card {
+    background: white; border-radius: 12px; padding: 20px 22px;
+    margin-bottom: 16px; border: 1.5px solid #e8e8e8;
+    transition: box-shadow 0.2s;
+  }
+  .question-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.07); }
+  .q-header { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 14px; }
+  .q-num {
+    background: #1a1a2e; color: white; border-radius: 8px;
+    min-width: 32px; height: 32px; display: flex; align-items: center;
+    justify-content: center; font-size: 0.8rem; font-weight: 700; flex-shrink: 0;
+  }
+  .q-type-badge {
+    font-size: 0.68rem; font-weight: 700; padding: 2px 8px; border-radius: 10px;
+    text-transform: uppercase; letter-spacing: 0.5px; flex-shrink: 0;
+    margin-top: 6px;
+  }
+  .badge-mc { background: #e8f4fd; color: #1565c0; }
+  .badge-tf { background: #fce8e8; color: #c62828; }
+  .badge-id { background: #e8f5e9; color: #2e7d32; }
+  .q-text { font-size: 0.92rem; line-height: 1.5; color: #222; flex: 1; padding-top: 5px; }
+  .options { display: flex; flex-direction: column; gap: 8px; margin-left: 44px; }
+  .option {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 14px; border-radius: 8px; border: 1.5px solid #e0e0e0;
+    cursor: pointer; transition: all 0.15s; font-size: 0.88rem;
+    user-select: none;
+  }
+  .option:hover { border-color: #f0a500; background: #fffbf0; }
+  .option.selected { border-color: #1565c0; background: #e8f4fd; }
+  .option.correct { border-color: #2e7d32; background: #e8f5e9; }
+  .option.wrong { border-color: #c62828; background: #fce8e8; }
+  .option-label {
+    font-weight: 700; color: #888; font-size: 0.8rem; min-width: 18px;
+  }
+  .tf-options { display: flex; gap: 10px; margin-left: 44px; }
+  .tf-btn {
+    padding: 9px 28px; border-radius: 8px; border: 1.5px solid #e0e0e0;
+    cursor: pointer; font-weight: 700; font-size: 0.88rem;
+    transition: all 0.15s; background: white;
+  }
+  .tf-btn:hover { border-color: #f0a500; background: #fffbf0; }
+  .tf-btn.selected { border-color: #1565c0; background: #e8f4fd; color: #1565c0; }
+  .tf-btn.correct { border-color: #2e7d32; background: #e8f5e9; color: #2e7d32; }
+  .tf-btn.wrong { border-color: #c62828; background: #fce8e8; color: #c62828; }
+  .id-input-wrap { margin-left: 44px; }
+  .id-input {
+    border: 1.5px solid #e0e0e0; border-radius: 8px; padding: 9px 14px;
+    font-size: 0.88rem; width: 100%; max-width: 360px;
+    outline: none; transition: border 0.15s;
+    font-family: inherit;
+  }
+  .id-input:focus { border-color: #f0a500; }
+  .id-input.correct { border-color: #2e7d32; background: #e8f5e9; }
+  .id-input.wrong { border-color: #c62828; background: #fce8e8; }
+  .feedback {
+    font-size: 0.8rem; margin-top: 8px; padding: 7px 12px;
+    border-radius: 7px; display: none;
+  }
+  .feedback.show { display: block; }
+  .feedback.correct-fb { background: #e8f5e9; color: #2e7d32; }
+  .feedback.wrong-fb { background: #fce8e8; color: #c62828; }
+  .submit-row {
+    display: flex; gap: 12px; align-items: center;
+    margin-top: 28px; flex-wrap: wrap;
+  }
+  .btn {
+    padding: 12px 28px; border-radius: 10px; border: none;
+    font-size: 0.92rem; font-weight: 700; cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-primary { background: #f0a500; color: white; }
+  .btn-primary:hover { background: #d4930a; transform: translateY(-1px); }
+  .btn-reset { background: #eee; color: #444; }
+  .btn-reset:hover { background: #ddd; }
+  .score-box {
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
+    color: white; border-radius: 12px; padding: 24px 28px;
+    margin-top: 20px; text-align: center; display: none;
+    border-left: 6px solid #f0a500;
+  }
+  .score-box.show { display: block; }
+  .score-big { font-size: 3rem; font-weight: 900; color: #f0a500; }
+  .score-label { font-size: 1rem; opacity: 0.8; margin-top: 4px; }
+  .score-grade { font-size: 1.3rem; font-weight: 700; margin-top: 10px; }
+  .section-divider {
+    font-size: 0.75rem; font-weight: 800; letter-spacing: 1.5px;
+    text-transform: uppercase; color: #888; margin: 24px 0 12px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .section-divider::after {
+    content: ''; flex: 1; height: 1px; background: #e0e0e0;
+  }
+  .answered-indicator {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #ccc; flex-shrink: 0; margin-top: 12px;
+  }
+  .answered-indicator.done { background: #f0a500; }
+</style>
+</head>
+<body>
+
+<div class="exam-header">
+  <h1>📋 Global Bike Inc. — Mock Exam</h1>
+  <p>Introduction to SAP S/4HANA using Global Bike &nbsp;|&nbsp; 40 Items &nbsp;|&nbsp; Mixed Format</p>
+</div>
+
+<div class="stats-bar">
+  <div class="stat-pill">Multiple Choice: <span>20</span></div>
+  <div class="stat-pill">True or False: <span>10</span></div>
+  <div class="stat-pill">Identification: <span>10</span></div>
+  <div class="stat-pill">Total Items: <span>40</span></div>
+</div>
+
+<div id="exam-form"></div>
+
+<div class="submit-row">
+  <button class="btn btn-primary" onclick="submitExam()">✅ Submit Exam</button>
+  <button class="btn btn-reset" onclick="resetExam()">🔄 Reset</button>
+</div>
+
+<div class="score-box" id="score-box">
+  <div class="score-big" id="score-val"></div>
+  <div class="score-label" id="score-label"></div>
+  <div class="score-grade" id="score-grade"></div>
+</div>
+
+<script>
+const questions = [
+  // ── MULTIPLE CHOICE (1-20) ──
+  { type:'mc', q:'What year did Frankenstein Bikes and Heidelberg Composites merge to form Global Bike Inc.?', opts:['1990','1993','2000','2001'], ans:3 },
+  { type:'mc', q:'Who founded Frankenstein Bikes?', opts:['Peter Schwarz','Hans-Werner Schnoor','John Davis','Paul Hansen'], ans:2 },
+  { type:'mc', q:'Peter Schwarz started Heidelberg Composites in which year?', opts:['1990','1993','2001','2005'], ans:1 },
+  { type:'mc', q:'Which company does Global Bike Germany GmbH belong to?', opts:['Global Bike Inc.','Heidelberg Composites','The Global Bike Group','Frankenstein Bikes'], ans:2 },
+  { type:'mc', q:'Which Co-CEO is responsible for Sales, Marketing, IT, Finance, and Human Resources?', opts:['Peter Schwarz','John Davis','Paul Hansen','Hans-Werner Schnoor'], ans:1 },
+  { type:'mc', q:'What is the product code for the Deluxe Touring Bike (Red)?', opts:['DXTR1000','DXTR2000','DXTR3000','PRTR3000'], ans:2 },
+  { type:'mc', q:'Which of the following is classified as a Semi-Finished Good in Global Bike?', opts:['Men\'s Off Road Bike','Carbon Composite Wheel Assembly','Off Road Helmet','Touring Tire'], ans:1 },
+  { type:'mc', q:'Which SAP module handles the Order-to-Cash process alongside SD and MM?', opts:['HR','FI','CO','PP'], ans:1 },
+  { type:'mc', q:'The product code ORMN1000 refers to which finished good?', opts:['Women\'s Off Road Bike','Men\'s Off Road Frame','Men\'s Off Road Bike','Off Road Aluminum Wheel'], ans:2 },
+  { type:'mc', q:'Which city is NOT listed as a location of Global Bike Inc.?', opts:['Dallas','Miami','San Diego','New York'], ans:3 },
+  { type:'mc', q:'What SAP software version is used in this curriculum?', opts:['SAP S/4HANA 2019','SAP S/4HANA 2020','SAP R/3 2021','SAP ECC 6.0'], ans:1 },
+  { type:'mc', q:'Which business process is described as "Buy" in Global Bike\'s process list?', opts:['Financial Accounting','Production','Procurement','Fulfillment'], ans:2 },
+  { type:'mc', q:'The Procure-to-Pay process in Global Bike involves which two SAP modules?', opts:['SD and FI','MM and FI','SD and MM','PP and CO'], ans:1 },
+  { type:'mc', q:'What is the product code for Touring Frame – Silver?', opts:['TRFR1000','TRFR2000','TRFR3000','TRWH1000'], ans:1 },
+  { type:'mc', q:'Where is Global Bike Germany GmbH headquartered?', opts:['Berlin and Munich','Frankfurt and Cologne','Heidelberg and Hamburg','Bonn and Stuttgart'], ans:2 },
+  { type:'mc', q:'Which of the following is a Trading Good (Accessory) sold by Global Bike?', opts:['Carbon Composite Wheel','Touring Aluminum Wheel Assembly','Off Road Helmet','Pedal Assembly'], ans:2 },
+  { type:'mc', q:'Who serves as the President of Europe at Global Bike?', opts:['Paul Hansen','Hans-Werner Schnoor','Antonio Rodriguez','Wilhelm Ollenhauer'], ans:1 },
+  { type:'mc', q:'What is the product code for a Water Bottle?', opts:['CAGE1000','PUMP1000','BOTL1000','RKIT1000'], ans:2 },
+  { type:'mc', q:'Which of these customers is based in Seattle?', opts:['Silicon Valley Bikes','SoCal Bikes','Northwest Bikes','Rocky Mountain Bikes'], ans:2 },
+  { type:'mc', q:'What is the teaching material version of this curriculum?', opts:['3.0 (2020)','4.0 (2021)','4.1 (May 2022)','5.0 (2023)'], ans:2 },
+
+  // ── TRUE OR FALSE (21-30) ──
+  { type:'tf', q:'John Davis started his own mountain bike company in 1993 after winning numerous championships.', ans:'False' },
+  { type:'tf', q:'Global Bike Inc. is a global concern that uses full ERP capabilities.', ans:'True' },
+  { type:'tf', q:'Peter Schwarz is responsible for Sales, Marketing, and Finance at Global Bike.', ans:'False' },
+  { type:'tf', q:'Global Bike produces both Touring Bikes and Off-Road Bikes as finished goods.', ans:'True' },
+  { type:'tf', q:'The curriculum requires prerequisites such as prior SAP experience before study.', ans:'False' },
+  { type:'tf', q:'The Touring Frame comes in three color variants: Black, Red, and Silver.', ans:'True' },
+  { type:'tf', q:'The Order-to-Cash process involves the SD, MM, and FI modules in SAP.', ans:'True' },
+  { type:'tf', q:'Global Bike Germany GmbH has locations in Berlin and Frankfurt.', ans:'False' },
+  { type:'tf', q:'A Warranty Document (WDOC1000) is classified as a Raw Material in Global Bike\'s product list.', ans:'True' },
+  { type:'tf', q:'The "Make" business process in Global Bike refers to Production.', ans:'True' },
+
+  // ── IDENTIFICATION (31-40) ──
+  { type:'id', q:'Name the two companies that merged in 2001 to form Global Bike Inc.', ans:'Frankenstein Bikes and Heidelberg Composites', alt:['frankenstein bikes and heidelberg composites'] },
+  { type:'id', q:'What is the product code for the Professional Touring Bike (Black)?', ans:'PRTR1000', alt:['prtr1000'] },
+  { type:'id', q:'What is the name of the German customer located in Magdeburg?', ans:'Velodom', alt:['velodom'] },
+  { type:'id', q:'Who is the Plant Manager at Global Bike Inc. (US)?', ans:'Hiro Abe', alt:['hiro abe'] },
+  { type:'id', q:'What business process does "Track" refer to in the context of financial reporting?', ans:'Financial Accounting', alt:['financial accounting'] },
+  { type:'id', q:'What is the product code for the Carbon Composite Wheel (raw material)?', ans:'CCWH1000', alt:['ccwh1000'] },
+  { type:'id', q:'What city is the US customer "Rocky Mountain Bikes" located in?', ans:'Denver', alt:['denver'] },
+  { type:'id', q:'What is the name of the German vendor located in Würzburg?', ans:'Main Carbon', alt:['main carbon'] },
+  { type:'id', q:'What SAP module abbreviation stands for Sales and Distribution?', ans:'SD', alt:['sd'] },
+  { type:'id', q:'What is the overall parent entity of Global Bike Inc. and Global Bike Germany GmbH?', ans:'Global Bike Group', alt:['global bike group'] },
+];
+
+let userAnswers = {};
+let submitted = false;
+
+function buildExam() {
+  const form = document.getElementById('exam-form');
+  form.innerHTML = '';
+
+  let lastType = null;
+  const sectionLabels = { mc:'Part I – Multiple Choice', tf:'Part II – True or False', id:'Part III – Identification' };
+
+  questions.forEach((q, i) => {
+    if (q.type !== lastType) {
+      const div = document.createElement('div');
+      div.className = 'section-divider';
+      div.textContent = sectionLabels[q.type];
+      form.appendChild(div);
+      lastType = q.type;
+    }
+
+    const card = document.createElement('div');
+    card.className = 'question-card';
+    card.id = `card-${i}`;
+
+    const badgeClass = { mc:'badge-mc', tf:'badge-tf', id:'badge-id' }[q.type];
+    const badgeText = { mc:'Multiple Choice', tf:'True / False', id:'Identification' }[q.type];
+
+    let inputHTML = '';
+    if (q.type === 'mc') {
+      inputHTML = `<div class="options" id="opts-${i}">` +
+        q.opts.map((o, j) => `<div class="option" id="opt-${i}-${j}" onclick="selectMC(${i},${j})">
+          <span class="option-label">${['A','B','C','D'][j]}</span>${o}</div>`).join('') +
+        `</div>`;
+    } else if (q.type === 'tf') {
+      inputHTML = `<div class="tf-options">
+        <button class="tf-btn" id="tf-${i}-T" onclick="selectTF(${i},'True')">True</button>
+        <button class="tf-btn" id="tf-${i}-F" onclick="selectTF(${i},'False')">False</button>
+      </div>`;
+    } else {
+      inputHTML = `<div class="id-input-wrap">
+        <input class="id-input" id="id-${i}" type="text" placeholder="Type your answer here..." oninput="saveID(${i})"/>
+      </div>`;
+    }
+
+    card.innerHTML = `
+      <div class="q-header">
+        <div class="q-num">${i+1}</div>
+        <div class="q-text">${q.q}</div>
+        <span class="q-type-badge ${badgeClass}">${badgeText}</span>
+        <div class="answered-indicator" id="ind-${i}"></div>
+      </div>
+      ${inputHTML}
+      <div class="feedback" id="fb-${i}"></div>`;
+    form.appendChild(card);
+  });
+}
+
+function selectMC(qi, oi) {
+  if (submitted) return;
+  userAnswers[qi] = oi;
+  document.querySelectorAll(`#opts-${qi} .option`).forEach((el, j) => {
+    el.classList.toggle('selected', j === oi);
+  });
+  document.getElementById(`ind-${qi}`).classList.add('done');
+}
+
+function selectTF(qi, val) {
+  if (submitted) return;
+  userAnswers[qi] = val;
+  ['True','False'].forEach(v => {
+    const btn = document.getElementById(`tf-${qi}-${v[0]}`);
+    btn.classList.toggle('selected', v === val);
+  });
+  document.getElementById(`ind-${qi}`).classList.add('done');
+}
+
+function saveID(qi) {
+  userAnswers[qi] = document.getElementById(`id-${qi}`).value;
+  const ind = document.getElementById(`ind-${qi}`);
+  ind.classList.toggle('done', userAnswers[qi].trim().length > 0);
+}
+
+function submitExam() {
+  submitted = true;
+  let score = 0;
+
+  questions.forEach((q, i) => {
+    const fb = document.getElementById(`fb-${i}`);
+    let correct = false;
+
+    if (q.type === 'mc') {
+      const userAns = userAnswers[i];
+      document.querySelectorAll(`#opts-${i} .option`).forEach((el, j) => {
+        el.classList.remove('selected');
+        if (j === q.ans) el.classList.add('correct');
+        else if (j === userAns) el.classList.add('wrong');
+      });
+      correct = userAns === q.ans;
+      fb.textContent = correct ? '✅ Correct!' : `❌ Correct answer: ${['A','B','C','D'][q.ans]}. ${q.opts[q.ans]}`;
+    } else if (q.type === 'tf') {
+      const userAns = userAnswers[i];
+      ['True','False'].forEach(v => {
+        const btn = document.getElementById(`tf-${i}-${v[0]}`);
+        btn.classList.remove('selected');
+        if (v === q.ans) btn.classList.add('correct');
+        else if (v === userAns && userAns !== q.ans) btn.classList.add('wrong');
+      });
+      correct = userAns === q.ans;
+      fb.textContent = correct ? '✅ Correct!' : `❌ Correct answer: ${q.ans}`;
+    } else {
+      const raw = (userAnswers[i] || '').trim().toLowerCase();
+      const allAns = [q.ans.toLowerCase(), ...(q.alt || [])];
+      correct = allAns.some(a => raw === a);
+      const input = document.getElementById(`id-${i}`);
+      input.classList.add(correct ? 'correct' : 'wrong');
+      fb.textContent = correct ? '✅ Correct!' : `❌ Correct answer: ${q.ans}`;
+    }
+
+    fb.className = `feedback show ${correct ? 'correct-fb' : 'wrong-fb'}`;
+    if (correct) score++;
+  });
+
+  const pct = Math.round((score/40)*100);
+  let grade = pct >= 90 ? '🏆 Excellent!' : pct >= 80 ? '🥇 Very Good' : pct >= 70 ? '👍 Good' : pct >= 60 ? '📚 Keep Studying' : '❗ Needs More Review';
+  const sb = document.getElementById('score-box');
+  document.getElementById('score-val').textContent = `${score}/40`;
+  document.getElementById('score-label').textContent = `${pct}% — ${questions.length} questions answered`;
+  document.getElementById('score-grade').textContent = grade;
+  sb.classList.add('show');
+  sb.scrollIntoView({ behavior:'smooth' });
+}
+
+function resetExam() {
+  submitted = false;
+  userAnswers = {};
+  document.getElementById('score-box').classList.remove('show');
+  buildExam();
+  window.scrollTo({ top:0, behavior:'smooth' });
+}
+
+buildExam();
+</script>
+</body>
+</html>
