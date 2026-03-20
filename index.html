@@ -7,13 +7,36 @@
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: 'Segoe UI', sans-serif; background: #f5f7fa; color: #1a1a2e; padding: 20px; }
-.header { background: linear-gradient(135deg, #1a1a2e, #16213e); color: white; padding: 22px 26px; border-radius: 12px; margin-bottom: 20px; border-left: 6px solid #f0a500; }
+
+/* ── HEADER ── */
+.header {
+  background: linear-gradient(135deg, #1a1a2e, #16213e);
+  color: white; padding: 22px 26px; border-radius: 12px;
+  margin-bottom: 8px; border-left: 6px solid #f0a500;
+}
 .header h1 { font-size: 1.3rem; font-weight: 700; margin-bottom: 4px; }
-.header p { font-size: 0.82rem; opacity: 0.7; }
-.pills { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 18px; }
+.header .subtitle { font-size: 0.82rem; opacity: 0.7; margin-bottom: 14px; }
+.header-meta {
+  display: flex; flex-wrap: wrap; gap: 10px;
+  border-top: 1px solid rgba(255,255,255,0.15); padding-top: 12px; margin-top: 4px;
+}
+.meta-item {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 0.78rem; opacity: 0.85;
+}
+.meta-item span.label { opacity: 0.6; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.5px; }
+.meta-item span.value { font-weight: 600; color: #f0a500; }
+.meta-divider { opacity: 0.3; font-size: 0.8rem; }
+
+/* ── PILLS ── */
+.pills { display: flex; gap: 10px; flex-wrap: wrap; margin: 14px 0 18px; }
 .pill { background: white; border-radius: 20px; padding: 5px 13px; font-size: 0.75rem; font-weight: 600; border: 1.5px solid #ddd; color: #555; }
 .pill b { color: #f0a500; }
+
+/* ── SECTION LABEL ── */
 .section-label { font-size: 0.72rem; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; color: #999; margin: 22px 0 10px; padding-bottom: 6px; border-bottom: 1px solid #e0e0e0; }
+
+/* ── CARD ── */
 .card { background: white; border-radius: 12px; padding: 18px 20px; margin-bottom: 14px; border: 1.5px solid #e8e8e8; }
 .qrow { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 8px; }
 .qnum { background: #1a1a2e; color: white; border-radius: 7px; min-width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; font-size: 0.78rem; font-weight: 700; flex-shrink: 0; }
@@ -24,6 +47,8 @@ body { font-family: 'Segoe UI', sans-serif; background: #f5f7fa; color: #1a1a2e;
 .mc-tag { background: #e8f4fd; color: #1565c0; }
 .tf-tag { background: #fce8e8; color: #c62828; }
 .id-tag { background: #e8f5e9; color: #2e7d32; }
+
+/* ── OPTIONS ── */
 .options { display: flex; flex-direction: column; gap: 7px; margin-left: 40px; }
 .opt { display: flex; align-items: center; gap: 9px; padding: 8px 12px; border-radius: 8px; border: 1.5px solid #e0e0e0; cursor: pointer; font-size: 0.86rem; transition: all 0.15s; }
 .opt:hover { border-color: #f0a500; background: #fffbf0; }
@@ -31,41 +56,95 @@ body { font-family: 'Segoe UI', sans-serif; background: #f5f7fa; color: #1a1a2e;
 .opt.correct { border-color: #2e7d32; background: #e8f5e9; }
 .opt.wrong { border-color: #c62828; background: #fce8e8; }
 .lbl { font-weight: 700; color: #aaa; font-size: 0.78rem; min-width: 16px; }
+
+/* ── TF ── */
 .tf-row { display: flex; gap: 10px; margin-left: 40px; }
 .tfbtn { padding: 8px 24px; border-radius: 8px; border: 1.5px solid #e0e0e0; cursor: pointer; font-weight: 700; font-size: 0.86rem; background: white; transition: all 0.15s; }
 .tfbtn:hover { border-color: #f0a500; background: #fffbf0; }
 .tfbtn.selected { border-color: #1565c0; background: #e8f4fd; color: #1565c0; }
 .tfbtn.correct { border-color: #2e7d32; background: #e8f5e9; color: #2e7d32; }
 .tfbtn.wrong { border-color: #c62828; background: #fce8e8; color: #c62828; }
+
+/* ── ID ── */
 .id-wrap { margin-left: 40px; }
 .id-inp { border: 1.5px solid #e0e0e0; border-radius: 8px; padding: 8px 12px; font-size: 0.86rem; width: 100%; max-width: 340px; outline: none; font-family: inherit; transition: border 0.15s; }
 .id-inp:focus { border-color: #f0a500; }
 .id-inp.correct { border-color: #2e7d32; background: #e8f5e9; }
 .id-inp.wrong { border-color: #c62828; background: #fce8e8; }
+
+/* ── FEEDBACK ── */
 .fb { font-size: 0.78rem; margin-top: 7px; padding: 6px 10px; border-radius: 6px; display: none; margin-left: 40px; }
 .fb.show { display: block; }
 .fb.ok { background: #e8f5e9; color: #2e7d32; }
 .fb.no { background: #fce8e8; color: #c62828; }
+
+/* ── BUTTONS ── */
 .btnrow { display: flex; gap: 12px; margin-top: 26px; }
 .btn { padding: 11px 26px; border-radius: 10px; border: none; font-size: 0.9rem; font-weight: 700; cursor: pointer; }
 .btn-go { background: #f0a500; color: white; }
 .btn-go:hover { background: #d4930a; }
 .btn-rst { background: #eee; color: #444; }
 .btn-rst:hover { background: #ddd; }
+
+/* ── SCORE ── */
 .scorebox { background: linear-gradient(135deg, #1a1a2e, #16213e); color: white; border-radius: 12px; padding: 22px 26px; margin-top: 18px; text-align: center; display: none; border-left: 6px solid #f0a500; }
 .scorebox.show { display: block; }
 .score-num { font-size: 2.8rem; font-weight: 900; color: #f0a500; }
 .score-sub { font-size: 0.9rem; opacity: 0.75; margin-top: 4px; }
 .score-grade { font-size: 1.2rem; font-weight: 700; margin-top: 8px; }
+
+/* ── FOOTER ── */
+.footer {
+  margin-top: 40px; border-top: 1.5px solid #e0e0e0;
+  padding-top: 18px; padding-bottom: 10px;
+  display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center;
+  gap: 10px;
+}
+.footer-left { font-size: 0.78rem; color: #666; line-height: 1.7; }
+.footer-left strong { color: #1a1a2e; font-size: 0.82rem; }
+.footer-right { font-size: 0.72rem; color: #aaa; text-align: right; line-height: 1.7; }
+.footer-badge {
+  display: inline-block; background: #f0a500; color: white;
+  border-radius: 5px; font-size: 0.68rem; font-weight: 700;
+  padding: 2px 8px; margin-right: 4px; vertical-align: middle;
+}
 </style>
 </head>
 <body>
 
+<!-- ── HEADER ── -->
 <div class="header">
   <h1>📋 Global Bike Inc. — Mock Exam</h1>
-  <p>Introduction to SAP S/4HANA using Global Bike &nbsp;|&nbsp; 40 Items &nbsp;|&nbsp; Mixed Format</p>
+  <p class="subtitle">Introduction to SAP S/4HANA using Global Bike &nbsp;|&nbsp; 40 Items &nbsp;|&nbsp; Mixed Format</p>
+  <div class="header-meta">
+    <div class="meta-item">
+      <span class="label">Created by</span>
+      <span class="value">Kim Cedrick C. Villar</span>
+    </div>
+    <div class="meta-divider">·</div>
+    <div class="meta-item">
+      <span class="label">Role</span>
+      <span class="value">Student</span>
+    </div>
+    <div class="meta-divider">·</div>
+    <div class="meta-item">
+      <span class="label">Course &amp; Section</span>
+      <span class="value">BSIT — IT-252</span>
+    </div>
+    <div class="meta-divider">·</div>
+    <div class="meta-item">
+      <span class="label">School</span>
+      <span class="value">National University – Fairview</span>
+    </div>
+    <div class="meta-divider">·</div>
+    <div class="meta-item">
+      <span class="label">Date Created</span>
+      <span class="value">March 16, 2026</span>
+    </div>
+  </div>
 </div>
 
+<!-- ── PILLS ── -->
 <div class="pills">
   <div class="pill">Multiple Choice: <b>20</b></div>
   <div class="pill">True or False: <b>10</b></div>
@@ -84,6 +163,21 @@ body { font-family: 'Segoe UI', sans-serif; background: #f5f7fa; color: #1a1a2e;
   <div class="score-num" id="snum"></div>
   <div class="score-sub" id="ssub"></div>
   <div class="score-grade" id="sgrade"></div>
+</div>
+
+<!-- ── FOOTER ── -->
+<div class="footer">
+  <div class="footer-left">
+    <span class="footer-badge">Student</span>
+    <strong>Kim Cedrick C. Villar</strong><br/>
+    BSIT &nbsp;·&nbsp; IT-252 &nbsp;·&nbsp; National University – Fairview<br/>
+    Based on: <em>Introduction to S/4HANA using Global Bike</em> — SAP UCC Magdeburg v4.1 (May 2022)
+  </div>
+  <div class="footer-right">
+    Date Created: March 16, 2026<br/>
+    40 Items &nbsp;·&nbsp; Mixed Format<br/>
+    © 2022 SAP SE / SAP UCC Magdeburg. All rights reserved.
+  </div>
 </div>
 
 <script>
@@ -149,10 +243,8 @@ function build() {
       f.appendChild(d);
       lastT = q.t;
     }
-
     var card = document.createElement('div');
     card.className = 'card';
-
     var body = '';
     if (q.t === 'mc') {
       body = '<div class="options" id="opts'+i+'">' +
@@ -167,7 +259,6 @@ function build() {
     } else {
       body = '<div class="id-wrap"><input class="id-inp" id="id'+i+'" type="text" placeholder="Type your answer..." oninput="saveID('+i+')"/></div>';
     }
-
     card.innerHTML =
       '<div class="qrow">'
         + '<div class="qnum">'+(i+1)+'</div>'
@@ -179,7 +270,6 @@ function build() {
       + '</div>'
       + body
       + '<div class="fb" id="fb'+i+'"></div>';
-
     f.appendChild(card);
   });
 }
